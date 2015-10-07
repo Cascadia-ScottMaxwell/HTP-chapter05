@@ -46,6 +46,8 @@ public class QuizFragment extends Fragment
    private int totalGuesses; // number of guesses made
    private int correctAnswers; // number of correct guesses
    private int guessRows; // number of rows displaying guess Buttons
+   private int currentGuesses;
+   private int firstGuess;
    private SecureRandom random; // used to randomize the quiz
    private Handler handler; // used to delay loading next flag
    private Animation shakeAnimation; // animation for incorrect guess
@@ -153,6 +155,8 @@ public class QuizFragment extends Fragment
       
       correctAnswers = 0; // reset the number of correct answers made
       totalGuesses = 0; // reset the total number of guesses the user made
+      firstGuess = 0;
+      currentGuesses = 0;
       quizCountriesList.clear(); // clear prior list of quiz countries
       
       int flagCounter = 1; 
@@ -259,10 +263,15 @@ public class QuizFragment extends Fragment
          String guess = guessButton.getText().toString();
          String answer = getCountryName(correctAnswer);
          ++totalGuesses; // increment number of guesses the user has made
+         ++currentGuesses;
          
          if (guess.equals(answer)) // if the guess is correct
          {
             ++correctAnswers; // increment the number of correct answers
+            if (currentGuesses == 1){
+               ++firstGuess;
+            }
+            currentGuesses = 0;
 
             // display correct answer in green text
             answerTextView.setText(answer + "!");
@@ -288,7 +297,8 @@ public class QuizFragment extends Fragment
                         
                         builder.setMessage(
                            getResources().getString(R.string.results, 
-                           totalGuesses, (1000 / (double) totalGuesses)));
+                           totalGuesses, (1000 / (double) totalGuesses), firstGuess));
+
                         
                         // "Reset Quiz" Button                              
                         builder.setPositiveButton(R.string.reset_quiz,
